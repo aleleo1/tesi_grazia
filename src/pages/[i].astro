@@ -62,9 +62,11 @@ const img1 = await images[test.src]();
     <main class="container">
         <button onclick="changePage(false);" class="nav-button left">-</button>
         <img
+            id="img"
             class="full-screen-image image-to-fade"
             src={img1.default.src}
             alt="test failed"
+            style="visibility: hidden;"
         />
         <button onclick="changePage(true);" class="nav-button right">+</button>
     </main>
@@ -92,6 +94,16 @@ const img1 = await images[test.src]();
         );
 
         observer.observe(document.querySelector(".image-to-fade"));
+
+        function checkImageComplete() {
+            var img = document.getElementById("img");
+            if (img.complete) {
+                img.style.visibility = "visible";
+            } else {
+                setTimeout(checkImageComplete, 100); // Retry after  100ms
+            }
+        }
+        window.addEventListener("load", checkImageComplete);
     </script>
 </Layout>
 <style>
