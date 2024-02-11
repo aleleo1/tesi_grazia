@@ -1,4 +1,5 @@
 ---
+import { fade, slide } from "astro:transitions";
 const pages = [
     { i: 1, src: "/src/assets/-01.webp" },
     { i: 2, src: "/src/assets/-02.webp" },
@@ -36,6 +37,27 @@ const pages = [
 ];
 import type { ImageMetadata } from "astro";
 import Layout from "../layouts/Layout.astro";
+const anim = {
+    old: {
+        name: "fadeIn",
+        duration: "0.8s",
+        easing: "linear",
+        fillMode: "forwards",
+    },
+    new: {
+        name: "fadeOut",
+        duration: "1s",
+        easing: "linear",
+        fillMode: "forwards",
+        delay: "0.8s", // This delay should match the duration of the fade-in animation
+    },
+};
+
+const myFade = {
+    forwards: anim,
+    backwards: anim,
+};
+
 const images = import.meta.glob<{ default: ImageMetadata }>("/src/assets/*");
 const { i } = Astro.params;
 if (!i) return Astro.redirect("/404");
@@ -60,50 +82,67 @@ const img1 = await images[test.src]();
 
 <Layout title="MAGAZINE">
     <main class="container">
-        <button onclick="changePage(false);" class="nav-button left">-</button>
+        <button class="nav-button left">-</button>
         <img
+            transition:animate={fade({ duration: "0.3s" })}
             id="img"
-            class="full-screen-image image-to-fade"
+            class="full-screen-image"
             src={img1.default.src}
             alt="test failed"
-            style="visibility: hidden;"
         />
-        <button onclick="changePage(true);" class="nav-button right">+</button>
+        <button class="nav-button right">+</button>
     </main>
-    <script defer>
-        function changePage(dir) {
-            if (!dir)
-                window.location.pathname = (
-                    Number(window.location.pathname.slice(1)) - 1
-                ).toString();
-            else
-                window.location.pathname = (
-                    Number(window.location.pathname.slice(1)) + 1
-                ).toString();
-        }
+    <script>
+        import { navigate } from "astro:transitions/client";
 
-        const observer = new IntersectionObserver(
-            (entries) => {
-                entries.forEach((entry) => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add("fadeIn");
-                    }
-                });
-            },
-            { threshold: 0.1 },
-        );
+        document.addEventListener("astro:page-load", () => {
+            document
+                .querySelector(".left")
+                .addEventListener("click", () => changePage(false));
+            document
+                .querySelector(".right")
+                .addEventListener("click", () => changePage(true));
 
-        observer.observe(document.querySelector(".image-to-fade"));
-
-        function checkImageComplete() {
-            var img = document.getElementById("img");
-            if (img.complete) {
-                img.style.visibility = "visible";
-            } else {
-                setTimeout(checkImageComplete, 100); // Retry after  100ms
+            function changePage(dir: boolean) {
+                if (!dir)
+                    navigate(
+                        (
+                            Number(window.location.pathname.slice(1)) - 1
+                        ).toString(),
+                    );
+                else
+                    navigate(
+                        (
+                            Number(window.location.pathname.slice(1)) + 1
+                        ).toString(),
+                    );
             }
-        }
-        window.addEventListener("load", checkImageComplete);
+            window.addEventListener("hashchange", function (event) {
+                // Handle the state change here
+                console.log("Location changed!", location.href);
+
+                const img = document.getElementById("img");
+
+                const observer = new IntersectionObserver(
+                    (entries) => {
+                        entries.forEach((entry) => {
+                            if (entry.isIntersecting) {
+                                entry.target.classList.add("fadeIn");
+                            }
+                        });
+                    },
+                    { threshold: 0.1 },
+                );
+
+                observer.observe(img);
+
+                function checkImageComplete() {
+                    img.style.visibility = "visible";
+                }
+                window.addEventListener("load", checkImageComplete);
+                // Your script logic here, which will run every time navigate() is called
+            });
+        });
     </script>
 </Layout>
 <style>
@@ -120,6 +159,7 @@ const img1 = await images[test.src]();
         height: 100%;
         width: 30px;
         background-color: white;
+        cursor: pointer;
     }
 
     .container {
