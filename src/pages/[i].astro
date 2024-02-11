@@ -118,32 +118,32 @@ const img1 = await images[test.src]();
                         ).toString(),
                     );
             }
-          /*   window.addEventListener("popstate", function (event) {
+            const img = document.getElementById("img");
+
+            const observer = new IntersectionObserver(
+                (entries) => {
+                    entries.forEach((entry) => {
+                        if (entry.isIntersecting) {
+                            entry.target.classList.add("fadeIn");
+                        }
+                    });
+                },
+                { threshold: 0.1 },
+            );
+
+            observer.observe(img);
+
+            function checkImageComplete() {
+                img.style.visibility = "visible";
+            }
+            img.addEventListener("onload", checkImageComplete);
+            /*   window.addEventListener("popstate", function (event) {
                 // Handle the state change here
                 console.log("Location changed!", location.href);
 
                 
                 // Your script logic here, which will run every time navigate() is called
             }); */
-            const img = document.getElementById("img");
-
-                const observer = new IntersectionObserver(
-                    (entries) => {
-                        entries.forEach((entry) => {
-                            if (entry.isIntersecting) {
-                                entry.target.classList.add("fadeIn");
-                            }
-                        });
-                    },
-                    { threshold: 0.1 },
-                );
-
-                observer.observe(img);
-
-                function checkImageComplete() {
-                    img.style.visibility = "visible";
-                }
-                img.addEventListener("onload", checkImageComplete);
         });
     </script>
 </Layout>
