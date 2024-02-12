@@ -37,63 +37,34 @@ const pages = [
 ];
 import type { ImageMetadata } from "astro";
 import Layout from "../layouts/Layout.astro";
-const anim = {
-    old: {
-        name: "fadeIn",
-        duration: "0.8s",
-        easing: "linear",
-        fillMode: "forwards",
-    },
-    new: {
-        name: "fadeOut",
-        duration: "1s",
-        easing: "linear",
-        fillMode: "forwards",
-        delay: "0.8s", // This delay should match the duration of the fade-in animation
-    },
-};
-
-const myFade = {
-    forwards: anim,
-    backwards: anim,
-};
 
 const images = import.meta.glob<{ default: ImageMetadata }>("/src/assets/*");
 const { i } = Astro.params;
 if (!i) return Astro.redirect("/404");
 let index = Number(i);
-if (index < 0) return Astro.redirect("/" + (pages.length - 1).toString());
+if (index <= 0) return Astro.redirect("/" + (pages.length - 1).toString());
 if (index >= pages.length) return Astro.redirect("/1");
 const test = pages.find((p) => p.i === index);
 /* const test2 = pages.find((p) => p.i === index + 1); */
-if (!test /* || !test2 */) return Astro.redirect("/404");
+if (!test || !images[test.src]) return Astro.redirect("/404");
 
-if (!images[test.src])
-    throw new Error(
-        `"${test.src}" does not exist in glob: "src/assets/*.{webp}"`,
-    );
-/* if (!images[test2.src])
-    throw new Error(
-        `"${test2.src}" does not exist in glob: "src/assets/*.{webp}"`,
-    ); */
 const img1 = await images[test.src]();
-/* const img2 = await images[test2.src](); */
 ---
 
 <Layout title="MAGAZINE">
     <main class="container">
         <button class="nav-button left">-</button>
         <img
-            transition:animate={fade({ duration: "0.3s" })}
+            transition:animate={fade({ duration: "0.2s" })}
             id="img"
             class="full-screen-image"
             src={img1.default.src}
             alt="test failed"
-            style="visibility: hidden;"
         />
         <button class="nav-button right">+</button>
     </main>
     <script>
+        import { prefetch } from "astro:prefetch";
         import { navigate } from "astro:transitions/client";
 
         document.addEventListener("astro:page-load", () => {
@@ -120,7 +91,7 @@ const img1 = await images[test.src]();
             }
             const img = document.getElementById("img");
 
-            const observer = new IntersectionObserver(
+/*             const observer = new IntersectionObserver(
                 (entries) => {
                     entries.forEach((entry) => {
                         if (entry.isIntersecting) {
@@ -131,10 +102,12 @@ const img1 = await images[test.src]();
                 { threshold: 0.1 },
             );
 
-            observer.observe(img);
+            observer.observe(img); */
 
             function checkImageComplete() {
-                img.style.visibility = "visible";
+                prefetch(
+                    (Number(window.location.pathname.slice(1)) + 1).toString(),
+                );
             }
             img.addEventListener("onload", checkImageComplete);
             /*   window.addEventListener("popstate", function (event) {
