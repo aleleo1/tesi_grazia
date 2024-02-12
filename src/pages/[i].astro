@@ -1,5 +1,7 @@
 ---
 import { fade, slide } from "astro:transitions";
+import "animate.css";
+
 const pages = [
     { i: 1, src: "/src/assets/-01.webp" },
     { i: 2, src: "/src/assets/-02.webp" },
@@ -49,23 +51,57 @@ const test = pages.find((p) => p.i === index);
 if (!test || !images[test.src]) return Astro.redirect("/404");
 
 const img1 = await images[test.src]();
+const turnPageAnimationForwards = {
+    old: {
+        name: "flipOutY",
+        duration: "1s",
+        easing: "ease-in-out",
+        fillMode: "forwards",
+    },
+    new: {
+        name: "flipInY",
+        duration: "1s",
+        easing: "ease-in-out",
+        fillMode: "forwads",
+    },
+};
+const turnPageAnimationBackwards = {
+    old: {
+        name: "flipOutY",
+        duration: "1s",
+        easing: "ease-in-out",
+        fillMode: "backwards",
+    },
+    new: {
+        name: "flipInY",
+        duration: "1s",
+        easing: "ease-in-out",
+        fillMode: "backwards",
+    },
+};
+
+const pageTurn = {
+    forwards: turnPageAnimationForwards,
+    backwards: turnPageAnimationBackwards,
+};
 ---
 
 <Layout title="MAGAZINE">
     <main class="container">
-        <button class="nav-button left">-</button>
+        <button class="nav-button left"></button>
         <img
-            transition:animate={fade({ duration: "0.2s" })}
+            transition:animate={pageTurn}
             id="img"
             class="full-screen-image"
             src={img1.default.src}
             alt="test failed"
         />
-        <button class="nav-button right">+</button>
+        <button class="nav-button right"></button>
     </main>
     <script>
         import { prefetch } from "astro:prefetch";
         import { navigate } from "astro:transitions/client";
+        import "animate.css";
 
         document.addEventListener("astro:page-load", () => {
             document
@@ -91,50 +127,31 @@ const img1 = await images[test.src]();
             }
             const img = document.getElementById("img");
 
-/*             const observer = new IntersectionObserver(
-                (entries) => {
-                    entries.forEach((entry) => {
-                        if (entry.isIntersecting) {
-                            entry.target.classList.add("fadeIn");
-                        }
-                    });
-                },
-                { threshold: 0.1 },
-            );
-
-            observer.observe(img); */
-
             function checkImageComplete() {
                 prefetch(
                     (Number(window.location.pathname.slice(1)) + 1).toString(),
                 );
             }
             img.addEventListener("onload", checkImageComplete);
-            /*   window.addEventListener("popstate", function (event) {
-                // Handle the state change here
-                console.log("Location changed!", location.href);
-
-                
-                // Your script logic here, which will run every time navigate() is called
-            }); */
         });
     </script>
 </Layout>
 <style>
     .left {
         left: 0;
-        z-index: 100;
     }
     .right {
         right: 0;
-        z-index: 100;
     }
     .nav-button {
         position: absolute;
         height: 100%;
-        width: 30px;
-        background-color: white;
+        width: 50vw;
+        background-color: transparent;
         cursor: pointer;
+        border: none;
+        outline: none;
+        z-index: 100;
     }
 
     .container {
@@ -150,44 +167,5 @@ const img1 = await images[test.src]();
         padding-right: 30px;
     }
 
-    .image-to-fade {
-        visibility: hidden;
-    }
-    @keyframes fadeIn {
-        0% {
-            opacity: 0;
-        }
-        20% {
-            opacity: 0.2;
-        }
-        30% {
-            opacity: 0.3;
-        }
-        40% {
-            opacity: 0.4;
-        }
-        50% {
-            opacity: 0.5;
-        }
-        60% {
-            opacity: 0.6;
-        }
-        70% {
-            opacity: 0.7;
-        }
-        80% {
-            opacity: 0.8;
-        }
-        90% {
-            opacity: 0.9;
-        }
 
-        100% {
-            opacity: 1;
-        }
-    }
-    .fadeIn {
-        animation: fadeIn 0.3s forwards linear; /* Adjust duration as needed */
-        visibility: visible !important;
-    }
 </style>
