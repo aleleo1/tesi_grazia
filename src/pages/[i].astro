@@ -67,7 +67,6 @@ const animation = dir ? "anime-in" : "anime-in-b";
         <button class="nav-button right"></button>
     </main>
     <script>
-        import { prefetch } from "astro:prefetch";
         import { navigate } from "astro:transitions/client";
         const flipOutYKeyframes = [
             { transform: "perspective(400px)", opacity: 1 },
@@ -136,12 +135,12 @@ const animation = dir ? "anime-in" : "anime-in-b";
                 }
             }
 
-            function checkImageComplete() {
+/*             function checkImageComplete() {
                 prefetch(
                     (Number(window.location.pathname.slice(1)) + 1).toString(),
                 );
             }
-            img.addEventListener("onload", checkImageComplete);
+            img.addEventListener("onload", checkImageComplete); */
         });
     </script>
 </Layout>
