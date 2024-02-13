@@ -51,20 +51,12 @@ const test = pages.find((p) => p.i === index);
 if (!test || !images[test.src]) return Astro.redirect("/404");
 
 const img1 = await images[test.src]();
-const nextImageIndex = index + 1 < pages.length ? index + 1 : 1;
 
-const nextImageUrl = (
-    await images[pages.find((p) => p.i === nextImageIndex).src]()
-).default.src;
-console.log(nextImageUrl);
 const animation = dir ? "anime-in" : "anime-in-b";
 ---
 
-<Layout title="MAGAZINE">
+<Layout title="MAGAZINE" preload={img1.default.src}>
     <main class="container">
-        <div style="position: absolute; display: none;" id="nextImgUrl">
-            {nextImageUrl}
-        </div>
         <button class="nav-button left"></button>
         <img
             id="img"
@@ -107,7 +99,7 @@ const animation = dir ? "anime-in" : "anime-in-b";
             fill: "forwards", // Keep the final state of the animation
             easing: "ease", // Easing function
         };
-        document
+        /*         document
             .querySelector(".nav-button")
             .addEventListener("mouseover", () => {
                 console.log("HOVER");
@@ -117,7 +109,7 @@ const animation = dir ? "anime-in" : "anime-in-b";
                 preloadLink.rel = "preload";
                 preloadLink.as = "image";
                 document.head.appendChild(preloadLink);
-            });
+            }); */
         document.addEventListener("astro:page-load", () => {
             const img = document.getElementById("img");
 
