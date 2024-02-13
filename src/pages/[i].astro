@@ -51,11 +51,12 @@ const test = pages.find((p) => p.i === index);
 if (!test || !images[test.src]) return Astro.redirect("/404");
 
 const img1 = await images[test.src]();
-
+const nextImageIndex = index + 1 >= pages.length ? index + 1 : 1;
+const nextImageUrl = pages.find((p) => p.i === nextImageIndex).src;
 const animation = dir ? "anime-in" : "anime-in-b";
 ---
 
-<Layout title="MAGAZINE">
+<Layout title="MAGAZINE" preload={nextImageUrl}>
     <main class="container">
         <button class="nav-button left"></button>
         <img
@@ -135,7 +136,7 @@ const animation = dir ? "anime-in" : "anime-in-b";
                 }
             }
 
-/*             function checkImageComplete() {
+            /*             function checkImageComplete() {
                 prefetch(
                     (Number(window.location.pathname.slice(1)) + 1).toString(),
                 );
