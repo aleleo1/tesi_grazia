@@ -114,9 +114,9 @@ const animation = dir ? "anime-in" : "anime-in-b";
         };
 
         const prefetchLink = document.getElementById("nextImgUrl").textContent;
-        fetch(prefetchLink);
 
         document.addEventListener("astro:page-load", () => {
+            fetch(prefetchLink);
             const img = document.getElementById("img");
 
             document
