@@ -49,24 +49,22 @@ const test = pages.find((p) => p.i === index);
 /* const test2 = pages.find((p) => p.i === index + 1); */
 if (!test || !images[test.src]) return Astro.redirect("/404");
 
-const img1 = (await images[test.src]()).default.src + "?dir=" + dirParam;
-let nextImageIndex = 1;
-if (dir) nextImageIndex = index + 1 < pages.length ? index + 1 : 1;
-else nextImageIndex = index - 1 > 0 ? index - 1 : 1;
+const img1 =
+    "data:image/jpeg;base64," +
+    Buffer.from(
+        await (
+            await fetch(
+                new URL(Astro.request.url).origin +
+                    (await images[test.src]()).default.src,
+            )
+        ).arrayBuffer(),
+    ).toString("base64");
 
-const nextImageUrl =
-    (await images[pages.find((p) => p.i === nextImageIndex).src]()).default
-        .src +
-    "?dir=" +
-    dirParam;
 const animation = dir ? "anime-in" : "anime-in-b";
 ---
 
 <Layout title="MAGAZINE">
     <main class="container">
-        <div style="display: none; position: absolute;" id="nextImgUrl">
-            {nextImageUrl}
-        </div>
         <button class="nav-button left"></button>
         <img
             loading="eager"
@@ -105,19 +103,8 @@ const animation = dir ? "anime-in" : "anime-in-b";
             },
         ];
 
-        const prefetchLink = document.getElementById("nextImgUrl").textContent;
         const img = document.getElementById("img");
-        img.addEventListener("animationend", function (event) {
-            console.log("Animation ended ", event.animationName);
 
-            if (
-                event.animationName === "flipInY" ||
-                event.animationName === "flipInYB"
-            ) {
-                fetch(prefetchLink);
-            }
-        });
-        img.addEventListener('onload', () => console.log('LOADED IMG'))
         document.addEventListener("astro:page-load", () => {
             document
                 .querySelector(".left")
