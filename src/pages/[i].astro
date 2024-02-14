@@ -67,7 +67,6 @@ const animation = dir ? "anime-in" : "anime-in-b";
     <main class="container">
         <button class="nav-button left"></button>
         <img
-            loading="eager"
             id="img"
             class=`full-screen-image ${animation}`
             src={img1}
@@ -103,41 +102,54 @@ const animation = dir ? "anime-in" : "anime-in-b";
             },
         ];
 
-        const img = document.getElementById("img");
-
         document.addEventListener("astro:page-load", () => {
+            const img = document.getElementById("img");
+            function changePage(dir: boolean) {
+                if (!dir) {
+                    /*  const anime = img.animate(flipOutYBKeyframes, flipOutYOptions);
+                anime.onfinish = () =>
+                    navigate(
+                        (
+                            Number(window.location.pathname.slice(1)) - 1
+                        ).toString() + "?dir=0",
+                    ); */
+
+                    img.classList.add("anime-out-b");
+                } else {
+                    /* const anime = img.animate(
+                        flipOutYKeyframes,
+                        flipOutYOptions,
+                    );
+                    anime.onfinish = () => */
+                    img.classList.add("anime-out");
+                    /* navigate(
+                            (
+                                Number(window.location.pathname.slice(1)) + 1
+                            ).toString() + "?dir=1",
+                        ); */
+                }
+            }
             document
                 .querySelector(".left")
                 .addEventListener("click", () => changePage(false));
             document
                 .querySelector(".right")
                 .addEventListener("click", () => changePage(true));
-
-            function changePage(dir: boolean) {
-                if (!dir) {
-                    const anime = img.animate(
-                        flipOutYBKeyframes,
-                        flipOutYOptions,
+            img.addEventListener("animationend", (event) => {
+                console.log(event.animationName);
+                if (event.animationName === "flipOutY")
+                    navigate(
+                        (
+                            Number(window.location.pathname.slice(1)) + 1
+                        ).toString() + "?dir=1",
                     );
-                    anime.onfinish = () =>
-                        navigate(
-                            (
-                                Number(window.location.pathname.slice(1)) - 1
-                            ).toString() + "?dir=0",
-                        );
-                } else {
-                    const anime = img.animate(
-                        flipOutYKeyframes,
-                        flipOutYOptions,
+                if (event.animationName === "flipOutYB")
+                    navigate(
+                        (
+                            Number(window.location.pathname.slice(1)) - 1
+                        ).toString() + "?dir=0",
                     );
-                    anime.onfinish = () =>
-                        navigate(
-                            (
-                                Number(window.location.pathname.slice(1)) + 1
-                            ).toString() + "?dir=1",
-                        );
-                }
-            }
+            });
         });
     </script>
 </Layout>
@@ -270,10 +282,17 @@ const animation = dir ? "anime-in" : "anime-in-b";
         }
     }
     .anime-in {
-        animation: flipInY 1.3s ease-in-out forwards !important;
+        animation: flipInY 1.3s linear forwards !important;
     }
     .anime-in-b {
-        animation: flipInYB 1.3s ease-in-out forwards !important;
+        animation: flipInYB 1.3s linear forwards !important;
+    }
+
+    .anime-out {
+        animation: flipOutY 1.3s linear forwards !important;
+    }
+    .anime-out-b {
+        animation: flipOutYB 1.3s linear forwards !important;
     }
 
     @keyframes flipOutY {
@@ -297,7 +316,7 @@ const animation = dir ? "anime-in" : "anime-in-b";
             -webkit-transform: perspective(400px);
             transform: perspective(400px);
         }
-        85% {
+        50% {
             opacity: 0;
         }
 
@@ -313,7 +332,7 @@ const animation = dir ? "anime-in" : "anime-in-b";
             -webkit-transform: perspective(400px);
             transform: perspective(400px);
         }
-        85% {
+        50% {
             opacity: 0;
         }
 
