@@ -57,7 +57,6 @@ const nextImageIndex = index + 1 < pages.length ? index + 1 : 1;
 const nextImageUrl = (
     await images[pages.find((p) => p.i === nextImageIndex).src]()
 ).default.src/*  + "?dir=" + dirParam; */
-console.log(nextImageUrl);
 const animation = dir ? "anime-in" : "anime-in-b";
 ---
 
