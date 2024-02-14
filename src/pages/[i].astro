@@ -49,7 +49,7 @@ const test = pages.find((p) => p.i === index);
 /* const test2 = pages.find((p) => p.i === index + 1); */
 if (!test || !images[test.src]) return Astro.redirect("/404");
 
-const img1 = await images[test.src]();
+const img1 = (await images[test.src]()).default.src + "?dir=" + dirParam;
 let nextImageIndex = 1;
 if (dir) nextImageIndex = index + 1 < pages.length ? index + 1 : 1;
 else nextImageIndex = index - 1 > 0 ? index - 1 : 1;
@@ -72,7 +72,7 @@ const animation = dir ? "anime-in" : "anime-in-b";
             loading="eager"
             id="img"
             class=`full-screen-image ${animation}`
-            src={img1.default.src}
+            src={img1}
             alt="test failed"
         />
         <button class="nav-button right"></button>
