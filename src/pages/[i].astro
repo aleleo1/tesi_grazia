@@ -41,7 +41,8 @@ import Layout from "../layouts/Layout.astro";
 
 const images = import.meta.glob<{ default: ImageMetadata }>("/src/assets/*");
 const { i } = Astro.params;
-const dir = !!Number(new URL(Astro.request.url).searchParams.get("dir") ?? 1);
+const dirParam = new URL(Astro.request.url).searchParams.get("dir")
+const dir = !!Number(dirParam ?? 1);
 if (!i) return Astro.redirect("/404");
 let index = Number(i);
 if (index <= 0) return Astro.redirect("/" + (pages.length - 1).toString());
@@ -51,13 +52,18 @@ const test = pages.find((p) => p.i === index);
 if (!test || !images[test.src]) return Astro.redirect("/404");
 
 const img1 = await images[test.src]();
+const nextImageIndex = index + 1 < pages.length ? index + 1 : 1;
 
+const nextImageUrl = (
+    await images[pages.find((p) => p.i === nextImageIndex).src]()
+).default.src/*  + "?dir=" + dirParam; */
+console.log(nextImageUrl);
 const animation = dir ? "anime-in" : "anime-in-b";
 ---
 
 <Layout title="MAGAZINE" preload={img1.default.src}>
     <main class="container">
-        <button class="nav-button left"></button>
+                <button class="nav-button left"></button>
         <img
             id="img"
             class=`full-screen-image ${animation}`
@@ -99,7 +105,7 @@ const animation = dir ? "anime-in" : "anime-in-b";
             fill: "forwards", // Keep the final state of the animation
             easing: "ease", // Easing function
         };
-        /*         document
+/*         document
             .querySelector(".nav-button")
             .addEventListener("mouseover", () => {
                 console.log("HOVER");
@@ -260,10 +266,10 @@ const animation = dir ? "anime-in" : "anime-in-b";
         }
     }
     .anime-in {
-        animation: flipInY 1s ease-in-out forwards;
+        animation: flipInY 1s ease-in-out forwards !important;
     }
     .anime-in-b {
-        animation: flipInYB 1s ease-in-out forwards;
+        animation: flipInYB 1s ease-in-out forwards !important;
     }
 
     @keyframes flipOutY {
