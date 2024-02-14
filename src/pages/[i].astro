@@ -1,6 +1,4 @@
 ---
-import { fade, slide } from "astro:transitions";
-
 const pages = [
     { i: 1, src: "/src/assets/-01.webp" },
     { i: 2, src: "/src/assets/-02.webp" },
@@ -71,6 +69,7 @@ const animation = dir ? "anime-in" : "anime-in-b";
         </div>
         <button class="nav-button left"></button>
         <img
+            loading="eager"
             id="img"
             class=`full-screen-image ${animation}`
             src={img1.default.src}
@@ -106,19 +105,11 @@ const animation = dir ? "anime-in" : "anime-in-b";
             },
         ];
 
-        // Define animation options
-        const flipOutYBOptions: Partial<KeyframeAnimationOptions> = {
-            duration: 1000, // Animation duration in milliseconds
-            fill: "forwards", // Keep the final state of the animation
-            easing: "ease", // Easing function
-        };
-
         const prefetchLink = document.getElementById("nextImgUrl").textContent;
 
         document.addEventListener("astro:page-load", () => {
             fetch(prefetchLink);
             const img = document.getElementById("img");
-
             document
                 .querySelector(".left")
                 .addEventListener("click", () => changePage(false));
@@ -130,7 +121,7 @@ const animation = dir ? "anime-in" : "anime-in-b";
                 if (!dir) {
                     const anime = img.animate(
                         flipOutYBKeyframes,
-                        flipOutYBOptions,
+                        flipOutYOptions,
                     );
                     anime.onfinish = () =>
                         navigate(
