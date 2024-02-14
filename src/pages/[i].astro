@@ -41,7 +41,7 @@ import Layout from "../layouts/Layout.astro";
 
 const images = import.meta.glob<{ default: ImageMetadata }>("/src/assets/*");
 const { i } = Astro.params;
-const dirParam = new URL(Astro.request.url).searchParams.get("dir")
+const dirParam = new URL(Astro.request.url).searchParams.get("dir");
 const dir = !!Number(dirParam ?? 1);
 if (!i) return Astro.redirect("/404");
 let index = Number(i);
@@ -52,17 +52,24 @@ const test = pages.find((p) => p.i === index);
 if (!test || !images[test.src]) return Astro.redirect("/404");
 
 const img1 = await images[test.src]();
-const nextImageIndex = index + 1 < pages.length ? index + 1 : 1;
+let nextImageIndex = 1;
+if (dir) nextImageIndex = index + 1 < pages.length ? index + 1 : 1;
+else nextImageIndex = index - 1 > 0 ? index - 1 : 1;
 
-const nextImageUrl = (
-    await images[pages.find((p) => p.i === nextImageIndex).src]()
-).default.src/*  + "?dir=" + dirParam; */
+const nextImageUrl =
+    (await images[pages.find((p) => p.i === nextImageIndex).src]()).default
+        .src +
+    "?dir=" +
+    dirParam;
 const animation = dir ? "anime-in" : "anime-in-b";
 ---
 
-<Layout title="MAGAZINE" preload={img1.default.src}>
+<Layout title="MAGAZINE">
     <main class="container">
-                <button class="nav-button left"></button>
+        <div style="display: none; position: absolute;" id="nextImgUrl">
+            {nextImageUrl}
+        </div>
+        <button class="nav-button left"></button>
         <img
             id="img"
             class=`full-screen-image ${animation}`
@@ -73,6 +80,7 @@ const animation = dir ? "anime-in" : "anime-in-b";
     </main>
     <script>
         import { navigate } from "astro:transitions/client";
+
         const flipOutYKeyframes = [
             { transform: "perspective(400px)", opacity: 1 },
             { opacity: 0, offset: 0.5 },
@@ -104,17 +112,10 @@ const animation = dir ? "anime-in" : "anime-in-b";
             fill: "forwards", // Keep the final state of the animation
             easing: "ease", // Easing function
         };
-/*         document
-            .querySelector(".nav-button")
-            .addEventListener("mouseover", () => {
-                console.log("HOVER");
-                const preloadLink = document.createElement("link");
-                preloadLink.href =
-                    document.getElementById("nextImgUrl").textContent;
-                preloadLink.rel = "preload";
-                preloadLink.as = "image";
-                document.head.appendChild(preloadLink);
-            }); */
+
+        const prefetchLink = document.getElementById("nextImgUrl").textContent;
+        fetch(prefetchLink);
+
         document.addEventListener("astro:page-load", () => {
             const img = document.getElementById("img");
 
@@ -150,13 +151,6 @@ const animation = dir ? "anime-in" : "anime-in-b";
                         );
                 }
             }
-
-            /*             function checkImageComplete() {
-                prefetch(
-                    (Number(window.location.pathname.slice(1)) + 1).toString(),
-                );
-            }
-            img.addEventListener("onload", checkImageComplete); */
         });
     </script>
 </Layout>
