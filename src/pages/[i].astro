@@ -106,10 +106,19 @@ const animation = dir ? "anime-in" : "anime-in-b";
         ];
 
         const prefetchLink = document.getElementById("nextImgUrl").textContent;
+        const img = document.getElementById("img");
+        img.addEventListener("animationend", function (event) {
+            console.log("Animation ended ", event.animationName);
 
+            if (
+                event.animationName === "flipInY" ||
+                event.animationName === "flipInYB"
+            ) {
+                fetch(prefetchLink);
+            }
+        });
+        img.addEventListener('onload', () => console.log('LOADED IMG'))
         document.addEventListener("astro:page-load", () => {
-            fetch(prefetchLink);
-            const img = document.getElementById("img");
             document
                 .querySelector(".left")
                 .addEventListener("click", () => changePage(false));
@@ -183,9 +192,10 @@ const animation = dir ? "anime-in" : "anime-in-b";
             opacity: 0;
         }
 
-        80% {
+        50% {
             -webkit-transform: perspective(400px) rotate3d(0, 1, 0, 0deg);
             transform: perspective(400px) rotate3d(0, 1, 0, 0deg);
+            opacity: 1;
         }
 
         to {
@@ -270,10 +280,10 @@ const animation = dir ? "anime-in" : "anime-in-b";
         }
     }
     .anime-in {
-        animation: flipInY 1s ease-in-out forwards !important;
+        animation: flipInY 1.3s ease-in-out forwards !important;
     }
     .anime-in-b {
-        animation: flipInYB 1s ease-in-out forwards !important;
+        animation: flipInYB 1.3s ease-in-out forwards !important;
     }
 
     @keyframes flipOutY {
