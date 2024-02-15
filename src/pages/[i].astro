@@ -36,7 +36,6 @@ const pages = [
 ];
 import type { ImageMetadata } from "astro";
 import Layout from "../layouts/Layout.astro";
-import { string } from "astro/zod";
 
 const images = import.meta.glob<{ default: ImageMetadata }>("/src/assets/*");
 const { i } = Astro.params;
@@ -92,12 +91,13 @@ const animation = dir ? "anime-in" : "anime-in-b";
     </main>
     <script>
         import { navigate } from "astro:transitions/client";
+        import { prefetch } from "astro:prefetch";
 
         const flipOutYKeyframes = [
-            { transform: "perspective(400px)", opacity: 1 },
+            { transform: "perspective(1000px)", opacity: 1 },
             { opacity: 0, offset: 0.5 },
             {
-                transform: "perspective(400px) rotate3d(0, 1, 0, -180deg)",
+                transform: "perspective(1000px) rotate3d(0, 1, 0, -180deg)",
                 opacity: 0,
             },
         ];
@@ -110,10 +110,10 @@ const animation = dir ? "anime-in" : "anime-in-b";
         };
 
         const flipOutYBKeyframes = [
-            { transform: "perspective(400px)", opacity: 1 },
+            { transform: "perspective(1000px)", opacity: 1 },
             { opacity: 0, offset: 0.5 }, // Use offset to specify the keyframe at 85%
             {
-                transform: "perspective(400px) rotate3d(0, 1, 0, 180deg)",
+                transform: "perspective(1000px) rotate3d(0, 1, 0, 180deg)",
                 opacity: 0,
             },
         ];
@@ -153,7 +153,6 @@ const animation = dir ? "anime-in" : "anime-in-b";
                 .querySelector(".right")
                 .addEventListener("click", () => changePage(true));
             img.addEventListener("animationend", (event) => {
-                console.log(event.animationName);
                 if (event.animationName === "flipOutY")
                     navigate(
                         (
@@ -166,11 +165,11 @@ const animation = dir ? "anime-in" : "anime-in-b";
                             Number(window.location.pathname.slice(1)) - 1
                         ).toString() + "?dir=0",
                     );
-                if (event.animationName === "flipInYB") {
-                    fetch(nextUrl);
-                }
-                if (event.animationName === "flipInY") {
-                    fetch(nextUrl);
+                if (
+                    event.animationName === "flipInYB" ||
+                    event.animationName === "flipInY"
+                ) {
+                    prefetch(nextUrl);
                 }
             });
         });
@@ -207,108 +206,75 @@ const animation = dir ? "anime-in" : "anime-in-b";
 
     @-webkit-keyframes flipInY {
         from {
-            -webkit-transform: perspective(400px) rotate3d(0, 1, 0, 90deg);
-            transform: perspective(400px) rotate3d(0, 1, 0, 90deg);
-            -webkit-animation-timing-function: ease-in;
-            animation-timing-function: ease-in;
+            -webkit-transform: perspective(1000px) rotateY(90deg);
+            transform: perspective(1000px) rotateY(90deg);
+            -webkit-animation-timing-function: ease-out;
+            animation-timing-function: ease-out;
             opacity: 0;
-        }
-
-        50% {
-            -webkit-transform: perspective(400px) rotate3d(0, 1, 0, 0deg);
-            transform: perspective(400px) rotate3d(0, 1, 0, 0deg);
-            opacity: 1;
+            background-color: wheat;
         }
 
         to {
-            -webkit-transform: perspective(400px);
-            transform: perspective(400px);
+            -webkit-transform: perspective(1000px);
+            transform: perspective(1000px);
             opacity: 1;
         }
     }
     @keyframes flipInY {
         from {
-            -webkit-transform: perspective(400px) rotate3d(0, 1, 0, 90deg);
-            transform: perspective(400px) rotate3d(0, 1, 0, 90deg);
-            -webkit-animation-timing-function: ease-in;
-            animation-timing-function: ease-in;
+            -webkit-transform: perspective(1000px) rotateY(90deg);
+            transform: perspective(1000px) rotateY(90deg);
+            -webkit-animation-timing-function: ease-out;
+            animation-timing-function: ease-out;
             opacity: 0;
-        }
-
-        50% {
-            -webkit-transform: perspective(400px) rotate3d(0, 1, 0, 0deg);
-            transform: perspective(400px) rotate3d(0, 1, 0, 0deg);
-            opacity: 1;
+            background-color: wheat;
         }
 
         to {
-            -webkit-transform: perspective(400px);
-            transform: perspective(400px);
+            -webkit-transform: perspective(1000px);
+            transform: perspective(1000px);
             opacity: 1;
         }
     }
+
     @keyframes flipInYB {
         from {
-            -webkit-transform: perspective(400px) rotate3d(0, 1, 0, -90deg);
-            transform: perspective(400px) rotate3d(0, 1, 0, -90deg);
-            -webkit-animation-timing-function: ease-in;
-            animation-timing-function: ease-in;
+            -webkit-transform: perspective(1000px) rotateY(-90deg);
+            transform: perspective(1000px) rotateY(-90deg);
+            -webkit-animation-timing-function: ease-out;
+            animation-timing-function: ease-out;
             opacity: 0;
-        }
-
-        50% {
-            -webkit-transform: perspective(400px) rotate3d(0, 1, 0, 0deg);
-            transform: perspective(400px) rotate3d(0, 1, 0, 0deg);
-            opacity: 1;
+            background-color: wheat;
         }
 
         to {
-            -webkit-transform: perspective(400px);
-            transform: perspective(400px);
+            -webkit-transform: perspective(1000px);
+            transform: perspective(1000px);
             opacity: 1;
         }
     }
     @-webkit-keyframes flipInYB {
         from {
-            -webkit-transform: perspective(400px) rotate3d(0, 1, 0, -90deg);
-            transform: perspective(400px) rotate3d(0, 1, 0, -90deg);
-            -webkit-animation-timing-function: ease-in;
-            animation-timing-function: ease-in;
+            -webkit-transform: perspective(1000px) rotateY(-90deg);
+            transform: perspective(1000px) rotateY(-90deg);
+            -webkit-animation-timing-function: ease-out;
+            animation-timing-function: ease-out;
             opacity: 0;
-        }
-
-        50% {
-            -webkit-transform: perspective(400px) rotate3d(0, 1, 0, 0deg);
-            transform: perspective(400px) rotate3d(0, 1, 0, 0deg);
-            opacity: 1;
+            background-color: wheat;
         }
 
         to {
-            -webkit-transform: perspective(400px);
-            transform: perspective(400px);
+            -webkit-transform: perspective(1000px);
+            transform: perspective(1000px);
             opacity: 1;
         }
     }
-    @-webkit-keyframes flipOutY {
-        from {
-            -webkit-transform: perspective(400px);
-            transform: perspective(400px);
-        }
-        50% {
-            opacity: 0;
-        }
 
-        to {
-            -webkit-transform: perspective(400px) rotate3d(0, 1, 0, -180deg);
-            transform: perspective(400px) rotate3d(0, 1, 0, -180deg);
-            opacity: 0;
-        }
-    }
     .anime-in {
-        animation: flipInY 1.3s linear forwards !important;
+        animation: flipInY 1.3s ease-in-out forwards !important;
     }
     .anime-in-b {
-        animation: flipInYB 1.3s linear forwards !important;
+        animation: flipInYB 1.3s ease-in-out forwards !important;
     }
 
     .anime-out {
@@ -318,50 +284,82 @@ const animation = dir ? "anime-in" : "anime-in-b";
         animation: flipOutYB 1.3s linear forwards !important;
     }
 
-    @keyframes flipOutY {
+    @-webkit-keyframes flipOutY {
         from {
-            -webkit-transform: perspective(400px);
-            transform: perspective(400px);
+            -webkit-transform: perspective(1000px);
+            transform: perspective(1000px);
+        }
+        45% {
+            opacity: 1;
         }
         50% {
             opacity: 0;
+            background-color: wheat;
         }
 
         to {
-            -webkit-transform: perspective(400px) rotate3d(0, 1, 0, -180deg);
-            transform: perspective(400px) rotate3d(0, 1, 0, -180deg);
+            -webkit-transform: perspective(1000px) rotateY(-180deg);
+            transform: perspective(1000px) rotateY(-180deg);
+            opacity: 0;
+        }
+    }
+
+    @keyframes flipOutY {
+        from {
+            -webkit-transform: perspective(1000px);
+            transform: perspective(1000px);
+        }
+        45% {
+            opacity: 1;
+        }
+        50% {
+            opacity: 0;
+            background-color: wheat;
+        }
+
+        to {
+            -webkit-transform: rotateY(-180deg);
+            transform: perspective(1000px) rotateY(-180deg);
             opacity: 0;
         }
     }
 
     @-webkit-keyframes flipOutYB {
         from {
-            -webkit-transform: perspective(400px);
-            transform: perspective(400px);
+            -webkit-transform: perspective(1000px);
+            transform: perspective(1000px);
+        }
+        45% {
+            opacity: 1;
         }
         50% {
             opacity: 0;
+            background-color: wheat;
         }
 
         to {
-            -webkit-transform: perspective(400px) rotate3d(0, 1, 0, 180deg);
-            transform: perspective(400px) rotate3d(0, 1, 0, 180deg);
+            -webkit-transform: perspective(1000px) rotateY(180deg);
+            transform: perspective(1000px) rotateY(180deg);
             opacity: 0;
         }
     }
 
     @keyframes flipOutYB {
         from {
-            -webkit-transform: perspective(400px);
-            transform: perspective(400px);
+            -webkit-transform: perspective(1000px);
+            transform: perspective(1000px);
+        }
+        45% {
+            opacity: 1;
         }
         50% {
             opacity: 0;
+            background-color: wheat;
         }
 
         to {
-            -webkit-transform: perspective(400px) rotate3d(0, 1, 0, 180deg);
-            transform: perspective(400px) rotate3d(0, 1, 0, 180deg);
+            -webkit-transform: perspective(1000px) rotateY(180deg);
+            transform: perspective(1000px) rotateY(180deg);
             opacity: 0;
         }
     }
