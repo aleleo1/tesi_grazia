@@ -46,7 +46,7 @@ pages.forEach((p, pi) => {
                 : index_buffer[0].toString(),
         index: p.i > 1 ? (p.i !== pages.length ? p.i : pages.length) : 1,
         titolo: p.titolo ?? "",
-        pages: index_buffer,
+        pages: index_buffer.map((e) => e),
     });
     index_buffer[0] = index_buffer[1] === null ? 2 : index_buffer[0] + 2;
     index_buffer[1] = index_buffer[1] === null ? 3 : index_buffer[1] + 2;
@@ -57,7 +57,7 @@ const { i } = Astro.params;
 const dirParam = new URL(Astro.request.url).searchParams.get("dir");
 const dir = !!Number(dirParam ?? 1);
 if (!i) return Astro.redirect("/404");
-let index = Number(i);
+const index = Number(i);
 if (index <= 0) return Astro.redirect("/" + pages.length.toString());
 if (index > pages.length) return Astro.redirect("/1");
 const test = pages.find((p) => p.i === index);
@@ -86,11 +86,18 @@ const nextUrl =
     "?dir=" +
     Number(dir).toString();
 const animation = dir ? "anime-in" : "anime-in-b";
+const actualPage = indice[indice.findIndex((ii) => ii.index === index)];
+console.log(actualPage);
 ---
 
 <Layout title="MAGAZINE">
     <main class="main-container">
-        <div id="indice" class="indice">
+        <button
+            class="md:hidden z-20 bg-white hover:bg-white text-black font-bold py-2 px-4 absolute left-0 top-0 rounded"
+            id="active-index"
+        >
+        </button>
+        <div id="indice" class="indice md:block">
             <ul>
                 {
                     indice.map((i) => (
@@ -100,6 +107,9 @@ const animation = dir ? "anime-in" : "anime-in-b";
                     ))
                 }
             </ul>
+        </div>
+        <div class="absolute w-fit left-auto top-0 right-auto bg-white">
+            {`${actualPage.pages[0]} - ${actualPage.pages[1]}`}
         </div>
         <div class="cursor" id="cursor"></div>
         <div style="display: none; position: absolute;" id="nextUrl">
@@ -125,6 +135,13 @@ const animation = dir ? "anime-in" : "anime-in-b";
             const img = document.getElementById("img");
             const nextUrl = document.getElementById("nextUrl").textContent;
             const cursor = document.getElementById("cursor");
+            const indice = document.getElementById("indice");
+            document
+                .getElementById("active-index")
+                .addEventListener("click", () => {
+                    console.log("CLICK");
+                    indice.style.display = "block";
+                });
             Array.from(document.getElementsByClassName("index-elem")).forEach(
                 (e) =>
                     e.addEventListener("click", () => {
@@ -183,6 +200,31 @@ const animation = dir ? "anime-in" : "anime-in-b";
         background-color: wheat;
         width: fit-content;
         z-index: 200;
+        opacity: 0;
+    }
+    .indice:hover {
+        animation: fadeIn 0.5s ease-in forwards !important;
+    }
+
+    .fadeOut {
+        animation: fadeOut 0.5s ease-out forwards !important;
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+    @keyframes fadeOut {
+        from {
+            opacity: 1;
+        }
+        to {
+            opacity: 0;
+        }
     }
     .left {
         left: 0;
