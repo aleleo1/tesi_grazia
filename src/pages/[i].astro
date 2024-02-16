@@ -3,7 +3,7 @@ const pages = [
     { i: 1, src: "/src/assets/-01.webp" },
     { i: 2, src: "/src/assets/-02.webp" },
     { i: 3, src: "/src/assets/-03.webp" },
-    { i: 4, src: "/src/assets/-04.webp" },
+    { i: 4, src: "/src/assets/-04.webp", titolo: "Indice" },
     { i: 5, src: "/src/assets/-05.webp" },
     { i: 6, src: "/src/assets/-06.webp" },
     { i: 7, src: "/src/assets/-07.webp" },
@@ -36,6 +36,21 @@ const pages = [
 ];
 import type { ImageMetadata } from "astro";
 import Layout from "../layouts/Layout.astro";
+const indice = [];
+const index_buffer: Array<number | null> = [1, null];
+pages.forEach((p, pi) => {
+    indice.push({
+        text:
+            p.i !== pages.length
+                ? `${(p.i >= 2 ? index_buffer[0] : 1).toString()} ${p.i > 1 ? "-" : ""} ${p.i > 1 ? (pages[pi + 1] ? index_buffer[1].toString() : "") : ""}`
+                : index_buffer[0].toString(),
+        index: p.i > 1 ? (p.i !== pages.length ? p.i : pages.length) : 1,
+        titolo: p.titolo ?? "",
+        pages: index_buffer,
+    });
+    index_buffer[0] = index_buffer[1] === null ? 2 : index_buffer[0] + 2;
+    index_buffer[1] = index_buffer[1] === null ? 3 : index_buffer[1] + 2;
+});
 
 const images = import.meta.glob<{ default: ImageMetadata }>("/src/assets/*");
 const { i } = Astro.params;
@@ -43,10 +58,9 @@ const dirParam = new URL(Astro.request.url).searchParams.get("dir");
 const dir = !!Number(dirParam ?? 1);
 if (!i) return Astro.redirect("/404");
 let index = Number(i);
-if (index <= 0) return Astro.redirect("/" + (pages.length - 1).toString());
-if (index >= pages.length) return Astro.redirect("/1");
+if (index <= 0) return Astro.redirect("/" + pages.length.toString());
+if (index > pages.length) return Astro.redirect("/1");
 const test = pages.find((p) => p.i === index);
-/* const test2 = pages.find((p) => p.i === index + 1); */
 if (!test || !images[test.src]) return Astro.redirect("/404");
 
 const img1 =
@@ -61,11 +75,10 @@ const img1 =
     ).toString("base64");
 let nextIndex = 1;
 if (dir) {
-    nextIndex = index + 1 < pages.length ? index + 1 : 1;
+    nextIndex = index + 1 <= pages.length ? index + 1 : 1;
 } else {
-    nextIndex = index - 1 > 0 ? index - 1 : pages.length - 1;
+    nextIndex = index - 1 > 0 ? index - 1 : pages.length;
 }
-const next = pages.find((p) => p.i === nextIndex).src;
 const nextUrl =
     new URL(Astro.request.url).origin +
     "/" +
@@ -77,12 +90,25 @@ const animation = dir ? "anime-in" : "anime-in-b";
 
 <Layout title="MAGAZINE">
     <main class="main-container">
+        <div id="indice" class="indice">
+            <ul>
+                {
+                    indice.map((i) => (
+                        <li class="index-elem" index={i.index}>
+                            {i.text} {i.titolo ?? ""}
+                        </li>
+                    ))
+                }
+            </ul>
+        </div>
+        <div class="cursor" id="cursor"></div>
         <div style="display: none; position: absolute;" id="nextUrl">
             {nextUrl}
         </div>
         <button class="nav-button left"></button>
         <div class=`container` id="container">
             <img
+                loading="eager"
                 id="img"
                 class=`image ${animation}`
                 src={img1}
@@ -95,61 +121,29 @@ const animation = dir ? "anime-in" : "anime-in-b";
         import { navigate } from "astro:transitions/client";
         import { prefetch } from "astro:prefetch";
 
-        const flipOutYKeyframes = [
-            { transform: "perspective(1000px)", opacity: 1 },
-            { opacity: 0, offset: 0.5 },
-            {
-                transform: "perspective(1000px) rotate3d(0, 1, 0, -180deg)",
-                opacity: 0,
-            },
-        ];
-
-        // Define animation options
-        const flipOutYOptions: Partial<KeyframeAnimationOptions> = {
-            duration: 1000, // Animation duration in milliseconds
-            fill: "forwards", // Keep the final state of the animation
-            easing: "ease", // Easing function
-        };
-
-        const flipOutYBKeyframes = [
-            { transform: "perspective(1000px)", opacity: 1 },
-            { opacity: 0, offset: 0.5 }, // Use offset to specify the keyframe at 85%
-            {
-                transform: "perspective(1000px) rotate3d(0, 1, 0, 180deg)",
-                opacity: 0,
-            },
-        ];
-
         document.addEventListener("astro:page-load", () => {
             const img = document.getElementById("img");
-            const container = document.getElementById("img");
             const nextUrl = document.getElementById("nextUrl").textContent;
+            const cursor = document.getElementById("cursor");
+            Array.from(document.getElementsByClassName("index-elem")).forEach(
+                (e) =>
+                    e.addEventListener("click", () => {
+                        navigate(e.getAttribute("index") + "?dir=1");
+                    }),
+            );
+            document.addEventListener("mousemove", (event) => {
+                cursor.style.top = event.clientY + "px";
+                cursor.style.left = event.clientX + "px";
+            });
+            document.addEventListener("mouseover", (event) => {
+                cursor.style.top = event.clientY + "px";
+                cursor.style.left = event.clientX + "px";
+            });
             function changePage(dir: boolean) {
                 if (!dir) {
-                    /*  const anime = img.animate(flipOutYBKeyframes, flipOutYOptions);
-                anime.onfinish = () =>
-                    navigate(
-                        (
-                            Number(window.location.pathname.slice(1)) - 1
-                        ).toString() + "?dir=0",
-                    ); */
-
-                    /*  container.classList.add("anime-out"); */
                     img.classList.add("anime-out-b");
                 } else {
-                    /* const anime = img.animate(
-                        flipOutYKeyframes,
-                        flipOutYOptions,
-                    );
-                    anime.onfinish = () => */
-                    /*     container.classList.add("anime-out"); */
                     img.classList.add("anime-out");
-
-                    /* navigate(
-                            (
-                                Number(window.location.pathname.slice(1)) + 1
-                            ).toString() + "?dir=1",
-                        ); */
                 }
             }
             document
@@ -182,6 +176,14 @@ const animation = dir ? "anime-in" : "anime-in-b";
     </script>
 </Layout>
 <style>
+    .indice {
+        position: absolute;
+        left: 0;
+        top: 0;
+        background-color: wheat;
+        width: fit-content;
+        z-index: 200;
+    }
     .left {
         left: 0;
     }
@@ -193,7 +195,6 @@ const animation = dir ? "anime-in" : "anime-in-b";
         height: 100%;
         width: 50vw;
         background-color: transparent;
-        cursor: pointer;
         border: none;
         outline: none;
         z-index: 100;
@@ -216,6 +217,7 @@ const animation = dir ? "anime-in" : "anime-in-b";
         flex-direction: column;
         align-items: center;
         justify-content: center;
+        cursor: none;
     }
 
     .image {
@@ -225,6 +227,20 @@ const animation = dir ? "anime-in" : "anime-in-b";
         max-height: 100%;
         margin-left: auto;
         margin-right: auto;
+    }
+
+    .anime-in {
+        animation: flipInY 1.3s ease-in-out forwards !important;
+    }
+    .anime-in-b {
+        animation: flipInYB 1.3s ease-in-out forwards !important;
+    }
+
+    .anime-out {
+        animation: flipOutY 1.3s linear forwards !important;
+    }
+    .anime-out-b {
+        animation: flipOutYB 1.3s linear forwards !important;
     }
 
     @-webkit-keyframes flipInY {
@@ -370,20 +386,6 @@ const animation = dir ? "anime-in" : "anime-in-b";
             transform: perspective(1000px);
             opacity: 1;
         }
-    }
-
-    .anime-in {
-        animation: flipInY 1.3s ease-in-out forwards !important;
-    }
-    .anime-in-b {
-        animation: flipInYB 1.3s ease-in-out forwards !important;
-    }
-
-    .anime-out {
-        animation: flipOutY 1.3s linear forwards !important;
-    }
-    .anime-out-b {
-        animation: flipOutYB 1.3s linear forwards !important;
     }
 
     @-webkit-keyframes flipOutY {
