@@ -87,13 +87,12 @@ const nextUrl =
     Number(dir).toString();
 const animation = dir ? "anime-in" : "anime-in-b";
 const actualPage = indice[indice.findIndex((ii) => ii.index === index)];
-console.log(actualPage);
 ---
 
 <Layout title="MAGAZINE">
     <main class="main-container">
         <button
-            class="md:hidden z-20 bg-white hover:bg-white text-black font-bold py-2 px-4 absolute left-0 top-0 rounded"
+            class="md:hidden hidden z-20 bg-white hover:bg-white text-black font-bold py-2 px-4 absolute left-0 top-0 rounded"
             id="active-index"
         >
         </button>
@@ -113,7 +112,7 @@ console.log(actualPage);
                 `${actualPage.pages[0] ?? ""} ${actualPage.pages[1] ? " - " + actualPage.pages[1] : ""}`
             }
         </div>
-        <div class="cursor" id="cursor"></div>
+        <div class="cursor md:block" id="cursor"></div>
         <div style="display: none; position: absolute;" id="nextUrl">
             {nextUrl}
         </div>
