@@ -91,7 +91,7 @@ const nextUrl =
     "?dir=" +
     Number(dir).toString();
 const animation = dir ? "anime-in" : "anime-in-b";
-Astro.request.headers.set('cache-control', 'public, max-age=3600')
+Astro.response.headers.set('cache-control', 'public, max-age=3600')
 ---
 
 <Layout title="MAGAZINE">
