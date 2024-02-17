@@ -1,4 +1,5 @@
 ---
+export const prerender = false;
 const pages = [
     { i: 1, src: "/src/assets/-01.webp" },
     { i: 2, src: "/src/assets/-02.webp" },
@@ -187,6 +188,8 @@ const animation = dir ? "anime-in" : "anime-in-b";
                 ) {
                     fetch(nextUrl, {
                         headers: {
+                            "cache-control": "public, max-age=3600",
+
                             "Cache-Control": "public, max-age=3600",
                         },
                     });

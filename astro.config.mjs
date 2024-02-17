@@ -10,6 +10,7 @@ export default defineConfig({
   server: {
     headers: {
       'Cache-Control': 'public, max-age=3600',
+      'cache-control': 'public, max-age=3600',
     }
   },
   adapter: vercel({
