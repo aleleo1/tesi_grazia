@@ -50,7 +50,6 @@ pages.forEach((p, pi) => {
         titolo: p.titolo ?? "",
         pages: index_buffer.map((e, i) => (lastpage && i === 1) ? null : e ),
     });
-    if(lastpage) console.log(indice)
     if(lastpage) return
     index_buffer[0] = index_buffer[1] === null ? 2 : index_buffer[0] + 2;
     index_buffer[1] = index_buffer[1] === null ? 3 : index_buffer[1] + 2;
