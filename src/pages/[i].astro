@@ -96,7 +96,7 @@ const actualPage = indice[indice.findIndex((ii) => ii.index === index)];
             id="active-index"
         >
         </button>
-        <div id="indice" class="indice md:block">
+        <div id="indice" class="indice hidden lg:block">
             <ul>
                 {
                     indice.map((i) => (
@@ -112,7 +112,7 @@ const actualPage = indice[indice.findIndex((ii) => ii.index === index)];
                 `${actualPage.pages[0] ?? ""} ${actualPage.pages[1] ? " - " + actualPage.pages[1] : ""}`
             }
         </div>
-        <div class="cursor md:block" id="cursor"></div>
+        <div class="cursor hidden lg:block" id="cursor"></div>
         <div style="display: none; position: absolute;" id="nextUrl">
             {nextUrl}
         </div>
@@ -137,12 +137,7 @@ const actualPage = indice[indice.findIndex((ii) => ii.index === index)];
             const nextUrl = document.getElementById("nextUrl").textContent;
             const cursor = document.getElementById("cursor");
             const indice = document.getElementById("indice");
-            document
-                .getElementById("active-index")
-                .addEventListener("click", () => {
-                    console.log("CLICK");
-                    indice.style.display = "block";
-                });
+            indice.addEventListener('mouseleave', () => {indice.classList.add('fadeOut')})
             Array.from(document.getElementsByClassName("index-elem")).forEach(
                 (e) =>
                     e.addEventListener("click", () => {
