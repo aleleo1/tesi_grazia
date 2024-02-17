@@ -39,6 +39,8 @@ import Layout from "../layouts/Layout.astro";
 const indice = [];
 const index_buffer: Array<number | null> = [1, null];
 pages.forEach((p, pi) => {
+    let lastpage = false
+    if(pi === pages.length - 1) lastpage = true
     indice.push({
         text:
             p.i !== pages.length
@@ -46,8 +48,10 @@ pages.forEach((p, pi) => {
                 : index_buffer[0].toString(),
         index: p.i > 1 ? (p.i !== pages.length ? p.i : pages.length) : 1,
         titolo: p.titolo ?? "",
-        pages: index_buffer.map((e) => e),
+        pages: index_buffer.map((e, i) => (lastpage && i === 1) ? null : e ),
     });
+    if(lastpage) console.log(indice)
+    if(lastpage) return
     index_buffer[0] = index_buffer[1] === null ? 2 : index_buffer[0] + 2;
     index_buffer[1] = index_buffer[1] === null ? 3 : index_buffer[1] + 2;
 });
@@ -61,6 +65,7 @@ const index = Number(i);
 if (index <= 0) return Astro.redirect("/" + pages.length.toString());
 if (index > pages.length) return Astro.redirect("/1");
 const test = pages.find((p) => p.i === index);
+const indice_attuale = indice.find(i => test.i === i.index)
 if (!test || !images[test.src]) return Astro.redirect("/404");
 
 const img1 =
@@ -86,7 +91,6 @@ const nextUrl =
     "?dir=" +
     Number(dir).toString();
 const animation = dir ? "anime-in" : "anime-in-b";
-const actualPage = indice[indice.findIndex((ii) => ii.index === index)];
 ---
 
 <Layout title="MAGAZINE">
@@ -109,7 +113,7 @@ const actualPage = indice[indice.findIndex((ii) => ii.index === index)];
         </div>
         <div class="absolute w-fit left-auto top-0 right-auto bg-white">
             {
-                `${actualPage.pages[0] ?? ""} ${actualPage.pages[1] ? " - " + actualPage.pages[1] : ""}`
+                indice_attuale.text
             }
         </div>
         <div class="cursor hidden lg:block" id="cursor"></div>
@@ -182,7 +186,7 @@ const actualPage = indice[indice.findIndex((ii) => ii.index === index)];
                     event.animationName === "flipInYB" ||
                     event.animationName === "flipInY"
                 ) {
-                    prefetch(nextUrl);
+                    prefetch(nextUrl, { with: 'fetch' });
                 }
             });
         });
