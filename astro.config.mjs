@@ -7,6 +7,11 @@ import tailwind from "@astrojs/tailwind";
 export default defineConfig({
   prefetch: true,
   output: "server",
+  server: {
+    headers: {
+      'Cache-Control': 'public, max-age=3600',
+    }
+  },
   adapter: vercel({
     imageService: true
   }),
