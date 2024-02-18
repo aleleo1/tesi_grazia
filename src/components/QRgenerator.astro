@@ -1,0 +1,151 @@
+---
+interface Props {
+    localPage?: number;
+}
+import QRCode from "qrcode";
+
+// With async/await
+const generateQR = async (text: string) => {
+    try {
+        return await QRCode.toDataURL(text);
+    } catch (err) {
+    }
+};
+const qr = await generateQR(Astro.url.origin);
+---
+
+<div id="options" class="options hidden lg:block">
+    <img src={qr} alt="qr code" id="qr" />
+    <button id="downloadButtonG">Download General QR</button>
+    <button id="fullScreen">fullScreen</button>
+    <button id="magazine">download full magazine</button>
+    <script lang="javascript" defer>
+        function clickFunction(evt) {
+            const base64String = document.getElementById("qr").src; // Replace with your Base64 string
+            const fileName = "magazine-soup-qr.png"; // Replace with your desired file name
+            const contentType = "image/png"; // Replace with the actual content type of your image
+            // Create a link element
+            const link = document.createElement("a");
+            link.href = base64String;
+            link.download = fileName;
+
+            // Append the link to the body
+            document.body.appendChild(link);
+
+            // Simulate a click to download the image
+            link.click();
+
+            // Remove the link from the body
+            document.body.removeChild(link);
+        }
+        document
+            .getElementById("downloadButtonG")
+            .removeEventListener("click", clickFunction);
+        document
+            .getElementById("downloadButtonG")
+            .addEventListener("click", clickFunction);
+
+        document
+            .getElementById("options")
+            .addEventListener("mouseleave", (evt) => {
+                options.classList.add("fadeOut");
+            });
+
+        function toggleFullScreen(event) {
+            if (
+                !document.fullscreenElement &&
+                !document.mozFullScreenElement &&
+                !document.webkitFullscreenElement &&
+                !document.msFullscreenElement
+            ) {
+                if (document.documentElement.requestFullscreen) {
+                    document.documentElement.requestFullscreen();
+                } else if (document.documentElement.msRequestFullscreen) {
+                    document.documentElement.msRequestFullscreen();
+                } else if (document.documentElement.mozRequestFullScreen) {
+                    document.documentElement.mozRequestFullScreen();
+                } else if (document.documentElement.webkitRequestFullscreen) {
+                    document.documentElement.webkitRequestFullscreen(
+                        Element.ALLOW_KEYBOARD_INPUT,
+                    );
+                }
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                } else if (document.mozCancelFullScreen) {
+                    document.mozCancelFullScreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                }
+            }
+        }
+        document
+            .getElementById("fullScreen")
+            .removeEventListener("click", toggleFullScreen);
+        document
+            .getElementById("fullScreen")
+            .addEventListener("click", toggleFullScreen);
+
+        function downloadMagazine(evt) {
+           const src = window.location.origin+'/magazine-soup-febbraio.pdf'// Replace with your Base64 string
+            const fileName = "magazine-soup.pdf"; // Replace with your desired file name
+            const contentType = "application/pdf"; // Replace with the actual content type of your image
+            // Create a link element
+            const link = document.createElement("a");
+            link.href = src;
+            link.download = fileName;
+
+            // Append the link to the body
+            document.body.appendChild(link);
+
+            // Simulate a click to download the image
+            link.click();
+
+            // Remove the link from the body
+            document.body.removeChild(link);
+        }
+        document
+            .getElementById("magazine")
+            .removeEventListener("click", downloadMagazine);
+        document
+            .getElementById("magazine")
+            .addEventListener("click", downloadMagazine);
+    </script>
+</div>
+<style>
+    .options {
+        position: absolute;
+        right: 0;
+        top: 0;
+        background-color: wheat;
+        width: fit-content;
+        z-index: 200;
+        opacity: 0;
+        display: flex;
+        flex-direction: column;
+        padding: 10px;
+    }
+    .options:hover {
+        animation: fadeIn 0.5s ease-in forwards !important;
+    }
+    .fadeOut {
+        animation: fadeOut 0.5s ease-out forwards !important;
+    }
+    #fullScreen {
+        margin-top: 10px;
+    }
+    #fullScreen:hover {
+        background-color: white;
+    }
+    #downloadButtonG:hover {
+        background-color: white;
+    }
+    #magazine {
+        margin-top: 10px;
+    }
+    #magazine:hover {
+        background-color: white;
+    }
+</style>
