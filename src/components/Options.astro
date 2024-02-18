@@ -8,8 +8,7 @@ import QRCode from "qrcode";
 const generateQR = async (text: string) => {
     try {
         return await QRCode.toDataURL(text);
-    } catch (err) {
-    }
+    } catch (err) {}
 };
 const qr = await generateQR(Astro.url.origin);
 ---
@@ -19,7 +18,9 @@ const qr = await generateQR(Astro.url.origin);
     <button id="downloadButtonG">Download General QR</button>
     <button id="fullScreen">fullScreen</button>
     <button id="magazine">download full magazine</button>
-    <script lang="javascript" defer>
+    <script>
+         document.addEventListener("astro:page-load", () => {
+        console.log("WE");
         function clickFunction(evt) {
             const base64String = document.getElementById("qr").src; // Replace with your Base64 string
             const fileName = "magazine-soup-qr.png"; // Replace with your desired file name
@@ -89,7 +90,7 @@ const qr = await generateQR(Astro.url.origin);
             .addEventListener("click", toggleFullScreen);
 
         function downloadMagazine(evt) {
-           const src = window.location.origin+'/magazine-soup-febbraio.pdf'// Replace with your Base64 string
+            const src = window.location.origin + "/magazine-soup-febbraio.pdf"; // Replace with your Base64 string
             const fileName = "magazine-soup.pdf"; // Replace with your desired file name
             const contentType = "application/pdf"; // Replace with the actual content type of your image
             // Create a link element
@@ -112,6 +113,7 @@ const qr = await generateQR(Astro.url.origin);
         document
             .getElementById("magazine")
             .addEventListener("click", downloadMagazine);
+    })
     </script>
 </div>
 <style>

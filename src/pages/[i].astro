@@ -1,5 +1,6 @@
 ---
 export const prerender = false;
+
 const pages = [
     { i: 1, src: "/src/assets/-01.webp" },
     { i: 2, src: "/src/assets/-02.webp" },
@@ -37,7 +38,7 @@ const pages = [
 ];
 import type { ImageMetadata } from "astro";
 import Layout from "../layouts/Layout.astro";
-import QRgenerator from "../components/QRgenerator.astro";
+import Options from "../components/Options.astro";
 const indice = [];
 const index_buffer: Array<number | null> = [1, null];
 pages.forEach((p, pi) => {
@@ -102,7 +103,7 @@ Astro.response.headers.set("cache-control", "public, max-age=3600");
             id="active-index"
         >
         </button>
-        <QRgenerator />
+        <Options />
 
         <div id="indice" class="indice hidden lg:block">
             <ul>
@@ -145,11 +146,11 @@ Astro.response.headers.set("cache-control", "public, max-age=3600");
             const nextUrl = document.getElementById("nextUrl").textContent;
             const cursor = document.getElementById("cursor");
             const indice = document.getElementById("indice");
-           
+
             indice.addEventListener("mouseleave", () => {
                 indice.classList.add("fadeOut");
             });
-           
+
             Array.from(document.getElementsByClassName("index-elem")).forEach(
                 (e) =>
                     e.addEventListener("click", () => {
