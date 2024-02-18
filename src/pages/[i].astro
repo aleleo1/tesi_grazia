@@ -209,11 +209,14 @@ Astro.response.headers.set("cache-control", "public, max-age=3600");
     .indice {
         position: absolute;
         left: 0;
-        top: 0;
+        bottom: 5vh;
+        top: 2vh;
         background-color: wheat;
         width: fit-content;
         z-index: 200;
         opacity: 0;
+        overflow-y: scroll;
+        height: 90vh;
     }
     .indice:hover {
         animation: fadeIn 0.5s ease-in forwards !important;
@@ -262,6 +265,13 @@ Astro.response.headers.set("cache-control", "public, max-age=3600");
         max-height: 100%;
         margin-left: auto;
         margin-right: auto;
+    }
+
+    .index-elem {
+        margin: 10px;
+    }
+    .index-elem:hover {
+        background-color: white;
     }
 
     .anime-in {
