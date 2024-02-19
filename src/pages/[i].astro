@@ -179,7 +179,10 @@ Astro.response.headers.set("cache-control", "public, max-age=3600");
                 .querySelector(".right")
                 .addEventListener("click", () => changePage(true));
             img.addEventListener("animationend", (event) => {
-                if (event.animationName === "flipOutY")
+                if (
+                    event.animationName === "flipOutY" ||
+                    event.animationName === "fadeOut"
+                )
                     navigate(
                         (
                             Number(window.location.pathname.slice(1)) + 1
@@ -205,6 +208,72 @@ Astro.response.headers.set("cache-control", "public, max-age=3600");
         });
     </script>
 </Layout>
+<!-- <style>
+    .container {
+        position: absolute;
+        left: 40vw;
+        right: 40vw;
+        top: 100px;
+        perspective: 800px;
+    }
+
+    .block {
+        width: 200px;
+        height: 200px;
+        position: relative;
+        transform-style: preserve-3d;
+        animation: rotate 5s infinite linear;
+    }
+
+    .face {
+        position: absolute;
+        width: 200px;
+        height: 200px;
+        line-height: 200px;
+        text-align: center;
+        font-size: 24px;
+    }
+
+    .front {
+        background-color: #ff6b6b;
+        transform: translateZ(100px);
+    }
+
+    .back {
+        background-color: #48dbfb;
+        transform: rotateY(180deg) translateZ(100px);
+    }
+
+    .right {
+        background-color: #1dd1a1;
+        transform: rotateY(90deg) translateZ(100px);
+    }
+
+    .left {
+        background-color: #feca57;
+        transform: rotateY(-90deg) translateZ(100px);
+    }
+
+    .top {
+        background-color: #5f27cd;
+        transform: rotateX(90deg) translateZ(100px);
+    }
+
+    .bottom {
+        background-color: #ff9ff3;
+        transform: rotateX(-90deg) translateZ(100px);
+    }
+
+    @keyframes rotate {
+        0% {
+            transform: rotateX(0) rotateY(0);
+        }
+        100% {
+            transform: rotateX(360deg) rotateY(360deg);
+      }
+    }
+    
+</style> -->
 <style>
     .indice {
         position: absolute;
@@ -244,6 +313,7 @@ Astro.response.headers.set("cache-control", "public, max-age=3600");
         justify-content: center;
         justify-items: center;
         text-align: center;
+        justify-content: center;
         margin-left: auto;
         margin-right: auto;
         height: 90%;
@@ -265,6 +335,7 @@ Astro.response.headers.set("cache-control", "public, max-age=3600");
         max-height: 100%;
         margin-left: auto;
         margin-right: auto;
+        transform-style: preserve-3d;
     }
 
     .index-elem {
@@ -275,17 +346,17 @@ Astro.response.headers.set("cache-control", "public, max-age=3600");
     }
 
     .anime-in {
-        animation: flipInY 1.3s ease-in-out forwards !important;
+        animation: /* flipInY */ fadeIn 1.3s /* ease-in-out */ linear forwards !important;
     }
     .anime-in-b {
-        animation: flipInYB 1.3s ease-in-out forwards !important;
+        animation: /* flipInYB */ fadeIn 1.3s /* ease-in-out */ linear forwards !important;
     }
 
     .anime-out {
-        animation: flipOutY 1.3s linear forwards !important;
+        animation: /* flipOutY */ fadeOut 0.8s linear forwards !important;
     }
     .anime-out-b {
-        animation: flipOutYB 1.3s linear forwards !important;
+        animation: /* flipOutYB */ fadeOut 0.8s linear forwards !important;
     }
 
     @-webkit-keyframes flipInY {
@@ -365,7 +436,7 @@ Astro.response.headers.set("cache-control", "public, max-age=3600");
             -webkit-animation-timing-function: ease-out;
             animation-timing-function: ease-out;
             opacity: 0;
-            /* padding-left: 10% */;
+            /* padding-left: 10% */
             /* background-color: wheat; */
         }
 
@@ -374,7 +445,7 @@ Astro.response.headers.set("cache-control", "public, max-age=3600");
             transform: perspective(1000px) rotateY(-90deg);
             -webkit-animation-timing-function: ease-out;
             animation-timing-function: ease-out;
-            /* padding-left: 10% */;
+            /* padding-left: 10% */
             opacity: 0;
             /* background-color: wheat; */
         }
@@ -384,7 +455,7 @@ Astro.response.headers.set("cache-control", "public, max-age=3600");
             transform: perspective(1000px) rotateY(-90deg);
             -webkit-animation-timing-function: ease-out;
             animation-timing-function: ease-out;
-            /* padding-left: 10% */;
+            /* padding-left: 10% */
             opacity: 0.2;
             /* background-color: wheat; */
         }
@@ -411,7 +482,7 @@ Astro.response.headers.set("cache-control", "public, max-age=3600");
             transform: perspective(1000px) rotateY(-90deg);
             -webkit-animation-timing-function: ease-out;
             animation-timing-function: ease-out;
-            /* padding-left: 10% */;
+            /* padding-left: 10% */
             opacity: 0;
             /* background-color: wheat; */
         }
@@ -421,7 +492,7 @@ Astro.response.headers.set("cache-control", "public, max-age=3600");
             transform: perspective(1000px) rotateY(-90deg);
             -webkit-animation-timing-function: ease-out;
             animation-timing-function: ease-out;
-            /* padding-left: 10% */;
+            /* padding-left: 10% */
             opacity: 0.2;
             /* background-color: wheat; */
         }
@@ -444,7 +515,7 @@ Astro.response.headers.set("cache-control", "public, max-age=3600");
         50% {
             opacity: 0;
             /* background-color: wheat; */
-            /* padding-right: 10% */;
+            /* padding-right: 10% */
         }
 
         to {
@@ -467,7 +538,7 @@ Astro.response.headers.set("cache-control", "public, max-age=3600");
         50% {
             opacity: 0;
             /* background-color: wheat; */
-            /* padding-right: 10% */;
+            /* padding-right: 10% */
         }
 
         to {
@@ -489,7 +560,7 @@ Astro.response.headers.set("cache-control", "public, max-age=3600");
         }
         50% {
             opacity: 0;
-            /* padding-left: 10% */;
+            /* padding-left: 10% */
             /* background-color: wheat; */
         }
 
@@ -510,7 +581,7 @@ Astro.response.headers.set("cache-control", "public, max-age=3600");
         }
         50% {
             opacity: 0;
-            /* padding-left: 10% */;
+            /* padding-left: 10% */
             /* background-color: wheat; */
         }
 

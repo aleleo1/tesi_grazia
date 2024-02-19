@@ -19,7 +19,7 @@ const { title } = Astro.props;
 		<ViewTransitions />
 	</head>
 	<body>
-<!-- 		<img
+		<!-- 		<img
 			class="full-screen-image bg"
 			src={bgImage.src}
 			alt="background image"
@@ -99,6 +99,9 @@ const { title } = Astro.props;
 				to {
 					opacity: 0;
 				}
+			}
+			.fadeOut {
+				animation: fadeOut 0.5s ease-out forwards !important;
 			}
 		</style>
 	</body>

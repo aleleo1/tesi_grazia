@@ -20,7 +20,6 @@ const qr = await generateQR(Astro.url.origin);
     <button id="magazine">download full magazine</button>
     <script>
          document.addEventListener("astro:page-load", () => {
-        console.log("WE");
         function clickFunction(evt) {
             const base64String = document.getElementById("qr").src; // Replace with your Base64 string
             const fileName = "magazine-soup-qr.png"; // Replace with your desired file name
